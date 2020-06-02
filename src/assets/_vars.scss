@@ -1,5 +1,5 @@
 $dark: #131313;
-
+$blue: rgb(0, 110, 255);
 @function transition($transitions) {
   $default: null;
   @each $transition in $transitions {

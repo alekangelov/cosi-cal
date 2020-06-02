@@ -1,11 +1,6 @@
-import React, {
-  createContext,
-  useContext,
-  Props,
-  useReducer,
-  useRef,
-} from "react";
+import React, { createContext, useContext, Props, useReducer } from "react";
 import moment, { Moment } from "moment";
+
 export type Event = {
   id: string;
   title: string;
