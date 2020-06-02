@@ -1,1 +1,9 @@
 $dark: #1b1b1b;
+
+@function transition($transitions) {
+  $default: null;
+  @each $transition in $transitions {
+    $default: $transition 0.25s ease-in-out, $default;
+  }
+  @return $default;
+}

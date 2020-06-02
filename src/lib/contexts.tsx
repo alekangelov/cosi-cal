@@ -1,19 +1,11 @@
-import React, {
-  createContext,
-  useContext,
-  Props,
-  useState,
-  useRef,
-  useReducer,
-  Reducer,
-} from "react";
+import React, { createContext, useContext, Props, useReducer } from "react";
 import moment, { Moment } from "moment";
-
-interface Event {
+export type Event = {
   id: string;
-  name: string;
-  date: Date;
-}
+  title: string;
+  date: string;
+  description: string;
+};
 type Option = { label: string; value: string };
 
 type CalendarContextProps = {
@@ -21,29 +13,31 @@ type CalendarContextProps = {
   months: Option[];
   events: Event[] | [];
   days: string[];
-  month: string;
-  daysInMonth: number;
-  currentDate: number;
-  currentDay: string;
-  firstDay: number;
+  month?: string;
+  daysInMonth?: number;
+  currentDate?: number;
+  currentDay?: string;
+  firstDay?: number;
 };
 
+type CalendarDispatchProps = () => void;
+
 export const CalendarContext = createContext<Partial<CalendarContextProps>>({});
-export const CalendarDispatchContext = createContext({});
+export const CalendarDispatchContext = createContext((props: Action) => {});
 
 type Action = {
-  type: "add" | "remove";
+  type: "ADD_EVENT" | "REMOVE_EVENT";
   payload: Event;
 };
 
 function calendarReducer(state: CalendarContextProps, action: Action) {
   switch (action.type) {
-    case "add":
+    case "ADD_EVENT":
       return {
         ...state,
         events: [...state.events, action.payload],
       };
-    case "remove":
+    case "REMOVE_EVENT":
       return {
         ...state,
         events: state.events.filter((e) => {
@@ -66,13 +60,15 @@ export function useCalendarDispatch() {
 const initialState: CalendarContextProps = {
   date: moment(),
   months: moment.months().map((e) => ({ label: e, value: e })),
-  events: [],
+  events: [
+    {
+      id: "2ASoB537nR",
+      title: "asd",
+      description: "asdasd",
+      date: "2020-06-12",
+    },
+  ],
   days: moment.weekdays(),
-  month: moment().format("MMMM"),
-  currentDate: moment().get("date"),
-  currentDay: moment().format("D"),
-  daysInMonth: moment().daysInMonth(),
-  firstDay: parseInt(moment().startOf("month").format("d")) - 1,
 };
 
 export function CalendarProvider<T>(props: Props<T>) {
@@ -81,7 +77,16 @@ export function CalendarProvider<T>(props: Props<T>) {
   });
   console.log(state);
   return (
-    <CalendarContext.Provider value={state}>
+    <CalendarContext.Provider
+      value={{
+        ...state,
+        month: state.date.format("MMMM"),
+        currentDate: state.date.get("date"),
+        currentDay: state.date.format("D"),
+        daysInMonth: state.date.daysInMonth(),
+        firstDay: parseInt(state.date.startOf("month").format("d")) - 1,
+      }}
+    >
       <CalendarDispatchContext.Provider value={dispatch}>
         {props.children}
       </CalendarDispatchContext.Provider>

@@ -1,16 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, FunctionComponent } from "react";
 import { useCalendarContext } from "../../lib/contexts";
 import { AddIcon } from "../Icons";
 import AddEvent from "./AddEvent";
+import moment from "moment";
+import { Event } from "../../lib/contexts";
+
+const SingleEvent = (props: any) => {
+  console.log(props.event);
+  return <div className="event-single"></div>;
+};
+
+const DaysInMonth: FunctionComponent = (props) => {
+  const { daysInMonth, events } = useCalendarContext();
+
+  return (
+    <>
+      {Array(daysInMonth)
+        .fill(0)
+        .map((e, i) => {
+          const singleDate = i + 1;
+          const eventsHere = events?.filter((e, i) => {
+            return singleDate === moment(e.date, "YYYY-MM-DD").get("D");
+          });
+          console.log(eventsHere);
+          return (
+            <div key={i + "cell"} className="cell">
+              <h2>{singleDate}</h2>
+              <div className="events">
+                {eventsHere?.map((e, i) => (
+                  <SingleEvent key={i + "singleEvent"} event={e} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+    </>
+  );
+};
 
 export default function Calendar() {
-  const { months, days, daysInMonth, firstDay } = useCalendarContext();
+  const { months, days, firstDay, month } = useCalendarContext();
   const [active, setActive] = useState<boolean>(false);
   return (
     <>
-      <AddEvent {...{ active }} />
+      <AddEvent {...{ active, toggle: () => setActive(false) }} />
       <div className="header">
-        <select className="month">
+        <select className="month" value={month}>
           {months?.map((e, i) => (
             <option key={e.value + "option"} value={e.value}>
               {e.label}
@@ -37,13 +72,7 @@ export default function Calendar() {
           .map((e, i) => (
             <div key={i + "emptyCell"} className="cell"></div>
           ))}
-        {Array(daysInMonth)
-          .fill(0)
-          .map((e, i) => (
-            <div key={i + "cell"} className="cell">
-              {i + 1}
-            </div>
-          ))}
+        <DaysInMonth />
       </div>
     </>
   );
