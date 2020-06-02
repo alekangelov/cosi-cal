@@ -107,20 +107,23 @@ const initialState: CalendarContextProps = {
   events: [
     {
       id: "2ASoB537nR",
-      title: "asd",
-      description: "asdasd",
+      title: "Sample Event 1",
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dolorum, autem fuga quia facilis reiciendis ullam blanditiis delectus ducimus consequatur recusandae molestias corporis reprehenderit inventore nemo, beatae nulla totam repellat.",
       date: "2020-06-12",
     },
     {
       id: "2ASos537nR",
-      title: "asd",
-      description: "asdasd",
+      title: "Sample Event 2",
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dolorum, autem fuga quia facilis reiciendis ullam blanditiis delectus ducimus consequatur recusandae molestias corporis reprehenderit inventore nemo, beatae nulla totam repellat.",
       date: "2020-06-12",
     },
     {
       id: "2ASod537nR",
-      title: "asd",
-      description: "asdasd",
+      title: "Sample Event 3",
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dolorum, autem fuga quia facilis reiciendis ullam blanditiis delectus ducimus consequatur recusandae molestias corporis reprehenderit inventore nemo, beatae nulla totam repellat.",
       date: "2020-06-12",
     },
   ],
