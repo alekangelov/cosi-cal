@@ -21,6 +21,11 @@ type CalendarContextProps = {
   months: Option[];
   events: Event[] | [];
   days: string[];
+  month: string;
+  daysInMonth: number;
+  currentDate: number;
+  currentDay: string;
+  firstDay: number;
 };
 
 export const CalendarContext = createContext<Partial<CalendarContextProps>>({});
@@ -63,11 +68,18 @@ const initialState: CalendarContextProps = {
   months: moment.months().map((e) => ({ label: e, value: e })),
   events: [],
   days: moment.weekdays(),
+  month: moment().format("MMMM"),
+  currentDate: moment().get("date"),
+  currentDay: moment().format("D"),
+  daysInMonth: moment().daysInMonth(),
+  firstDay: parseInt(moment().startOf("month").format("d")) - 1,
 };
 
 export function CalendarProvider<T>(props: Props<T>) {
-  const [state, dispatch] = useReducer(calendarReducer, initialState);
-  console.log(dispatch);
+  const [state, dispatch] = useReducer(calendarReducer, {
+    ...initialState,
+  });
+  console.log(state);
   return (
     <CalendarContext.Provider value={state}>
       <CalendarDispatchContext.Provider value={dispatch}>
