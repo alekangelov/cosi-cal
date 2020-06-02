@@ -1,4 +1,4 @@
-import React, { Props, FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { useSpring, a } from "react-spring";
 type AddEventProps = {
   active: boolean;
@@ -6,9 +6,18 @@ type AddEventProps = {
 
 const AddEvent: FunctionComponent<AddEventProps> = ({ active }) => {
   const style = useSpring({
-    display: active ? "block" : "none",
-    opacity: active ? 1 : 0,
-    transform: active ? "translate(-50%,-50%)" : "translate(-50%,-100%)",
+    to: async (next: any, cancel: any) => {
+      if (!active) {
+        await next({ opacity: 0, transform: "translate(-50%,-100%)" });
+        await next({ display: "none" });
+        return;
+      }
+      return next({
+        display: "block",
+        opacity: 1,
+        transform: "translate(-50%,-50%)",
+      });
+    },
   });
   return (
     <a.div style={style} className="add-event">
