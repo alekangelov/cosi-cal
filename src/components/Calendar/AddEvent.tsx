@@ -4,11 +4,25 @@ import { useFormik } from "formik";
 import { AddIcon } from "../Icons";
 import { useCalendarDispatch } from "../../lib/contexts";
 import shortid from "shortid";
+import * as Yup from "yup";
+
 type AddEventProps = {
   active: boolean;
-  event?: Event | undefined;
-  toggle?: () => void | undefined;
+  toggle: () => void;
 };
+
+const EventValidation = Yup.object().shape({
+  description: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("This is required!"),
+  title: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("This is required!"),
+  date: Yup.string().required("This is required!"),
+  id: Yup.string().required("This is required!"),
+});
 
 const AddEvent: FunctionComponent<AddEventProps> = ({ active, toggle }) => {
   const dispatch = useCalendarDispatch();
@@ -46,7 +60,9 @@ const AddEvent: FunctionComponent<AddEventProps> = ({ active, toggle }) => {
       description: "",
       date: "",
     },
+    validationSchema: EventValidation,
     onSubmit: (values) => {
+      toggle();
       formik.resetForm();
       dispatch({
         type: "ADD_EVENT",
@@ -72,6 +88,11 @@ const AddEvent: FunctionComponent<AddEventProps> = ({ active, toggle }) => {
               type="text"
               placeholder="title"
             ></input>
+            {formik.errors.title && (
+              <div className="error">
+                <p>{formik.errors.title}</p>
+              </div>
+            )}
           </div>
           <div className="form-group">
             <textarea
@@ -79,6 +100,11 @@ const AddEvent: FunctionComponent<AddEventProps> = ({ active, toggle }) => {
               onChange={formik.handleChange}
               name="description"
             ></textarea>
+            {formik.errors.description && (
+              <div className="error">
+                <p>{formik.errors.description}</p>
+              </div>
+            )}
           </div>
           <div className="form-group">
             <input
@@ -87,6 +113,11 @@ const AddEvent: FunctionComponent<AddEventProps> = ({ active, toggle }) => {
               name="date"
               type="date"
             />
+            {formik.errors.date && (
+              <div className="error">
+                <p>{formik.errors.date}</p>
+              </div>
+            )}
           </div>
           <div className="form-group">
             <button type="submit">Add Event</button>

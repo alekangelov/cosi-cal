@@ -125,6 +125,19 @@ button {
   display: grid;
   &-group {
     margin: 1rem 0;
+    .error {
+      border: 1px solid white;
+      border-radius: 1rem;
+      margin: 0.5rem 0;
+
+      p {
+        margin: 0;
+        color: white;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+    }
     input,
     textarea {
       font-family: $font;
@@ -134,6 +147,7 @@ button {
       outline: 0;
       resize: none;
       border: 0;
+      margin: 0;
       border-radius: 0.3rem;
       transition: transition(box-shadow);
       &:focus {
