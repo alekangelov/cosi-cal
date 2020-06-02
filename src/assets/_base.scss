@@ -131,4 +131,9 @@ button {
   height: 1rem;
   background: rgb(0, 110, 255);
   border-radius: 10rem;
+  cursor: pointer;
+  transition: transition(filter);
+  &:hover {
+    filter: brightness(1.1);
+  }
 }

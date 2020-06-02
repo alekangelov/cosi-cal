@@ -4,9 +4,9 @@ import { AddIcon } from "../Icons";
 import AddEvent from "./AddEvent";
 import moment from "moment";
 import { Event } from "../../lib/contexts";
+import ViewEvent from "./ViewEvent";
 
 const SingleEvent = (props: any) => {
-  console.log(props.event);
   return <div className="event-single"></div>;
 };
 
@@ -44,6 +44,7 @@ export default function Calendar() {
   return (
     <>
       <AddEvent {...{ active, toggle: () => setActive(false) }} />
+      <ViewEvent />
       <div className="header">
         <select className="month" value={month}>
           {months?.map((e, i) => (
