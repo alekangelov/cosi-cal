@@ -1,4 +1,10 @@
-import React, { createContext, useContext, Props, useReducer } from "react";
+import React, {
+  createContext,
+  useContext,
+  Props,
+  useReducer,
+  useRef,
+} from "react";
 import moment, { Moment } from "moment";
 export type Event = {
   id: string;
@@ -11,6 +17,7 @@ type Option = { label: string; value: string };
 type CalendarContextProps = {
   date: Moment;
   months: Option[];
+  inViewEvent: Event | null;
   events: Event[] | [];
   days: string[];
   month?: string;
@@ -26,26 +33,62 @@ export const CalendarContext = createContext<Partial<CalendarContextProps>>({});
 export const CalendarDispatchContext = createContext((props: Action) => {});
 
 type Action = {
-  type: "ADD_EVENT" | "REMOVE_EVENT";
-  payload: Event;
+  type:
+    | "ADD_EVENT"
+    | "REMOVE_EVENT"
+    | "ADD_INVIEW"
+    | "REMOVE_INVIEW"
+    | "SET_MONTH";
+  payload?: Event | string;
 };
 
-function calendarReducer(state: CalendarContextProps, action: Action) {
+function calendarReducer(
+  state: CalendarContextProps,
+  action: Action
+): CalendarContextProps {
   switch (action.type) {
     case "ADD_EVENT":
       return {
         ...state,
-        events: [...state.events, action.payload],
+        events:
+          action.payload && typeof action.payload !== "string"
+            ? [...state.events, action.payload]
+            : state.events,
+      };
+    case "ADD_INVIEW":
+      return {
+        ...state,
+        inViewEvent:
+          action.payload && typeof action.payload !== "string"
+            ? action.payload
+            : null,
+      };
+    case "SET_MONTH":
+      return {
+        ...state,
+        date:
+          typeof action.payload === "string"
+            ? moment().month(action.payload)
+            : moment(),
+      };
+    case "REMOVE_INVIEW":
+      return {
+        ...state,
+        inViewEvent: null,
       };
     case "REMOVE_EVENT":
       return {
         ...state,
         events: state.events.filter((e) => {
-          return e?.id;
+          return (
+            e?.id !==
+            (typeof action.payload !== "string" ? action.payload?.id : 0)
+          );
         }),
+        inViewEvent: null,
       };
     default:
-      return { ...state };
+      return state;
   }
 }
 
@@ -60,6 +103,7 @@ export function useCalendarDispatch() {
 const initialState: CalendarContextProps = {
   date: moment(),
   months: moment.months().map((e) => ({ label: e, value: e })),
+  inViewEvent: null,
   events: [
     {
       id: "2ASoB537nR",
@@ -67,8 +111,28 @@ const initialState: CalendarContextProps = {
       description: "asdasd",
       date: "2020-06-12",
     },
+    {
+      id: "2ASos537nR",
+      title: "asd",
+      description: "asdasd",
+      date: "2020-06-12",
+    },
+    {
+      id: "2ASod537nR",
+      title: "asd",
+      description: "asdasd",
+      date: "2020-06-12",
+    },
   ],
-  days: moment.weekdays(),
+  days: [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ],
 };
 
 export function CalendarProvider<T>(props: Props<T>) {
@@ -84,7 +148,7 @@ export function CalendarProvider<T>(props: Props<T>) {
         currentDate: state.date.get("date"),
         currentDay: state.date.format("D"),
         daysInMonth: state.date.daysInMonth(),
-        firstDay: parseInt(state.date.startOf("month").format("d")) - 1,
+        firstDay: parseInt(state.date.startOf("month").format("d")),
       }}
     >
       <CalendarDispatchContext.Provider value={dispatch}>

@@ -1,52 +1,29 @@
-import React, { useState, FunctionComponent } from "react";
-import { useCalendarContext } from "../../lib/contexts";
+import React, { useState } from "react";
+import { useCalendarContext, useCalendarDispatch } from "../../lib/contexts";
 import { AddIcon } from "../Icons";
 import AddEvent from "./AddEvent";
-import moment from "moment";
-import { Event } from "../../lib/contexts";
 import ViewEvent from "./ViewEvent";
-
-const SingleEvent = (props: any) => {
-  return <div className="event-single"></div>;
-};
-
-const DaysInMonth: FunctionComponent = (props) => {
-  const { daysInMonth, events } = useCalendarContext();
-
-  return (
-    <>
-      {Array(daysInMonth)
-        .fill(0)
-        .map((e, i) => {
-          const singleDate = i + 1;
-          const eventsHere = events?.filter((e, i) => {
-            return singleDate === moment(e.date, "YYYY-MM-DD").get("D");
-          });
-          console.log(eventsHere);
-          return (
-            <div key={i + "cell"} className="cell">
-              <h2>{singleDate}</h2>
-              <div className="events">
-                {eventsHere?.map((e, i) => (
-                  <SingleEvent key={i + "singleEvent"} event={e} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-    </>
-  );
-};
+import { DaysInMonth } from "./DaysInMonth";
 
 export default function Calendar() {
-  const { months, days, firstDay, month } = useCalendarContext();
+  const { months, firstDay, days, month } = useCalendarContext();
+  const dispatch = useCalendarDispatch();
   const [active, setActive] = useState<boolean>(false);
   return (
     <>
       <AddEvent {...{ active, toggle: () => setActive(false) }} />
       <ViewEvent />
       <div className="header">
-        <select className="month" value={month}>
+        <select
+          className="month"
+          value={month}
+          onChange={(e) => {
+            dispatch({
+              type: "SET_MONTH",
+              payload: e.target.value,
+            });
+          }}
+        >
           {months?.map((e, i) => (
             <option key={e.value + "option"} value={e.value}>
               {e.label}
